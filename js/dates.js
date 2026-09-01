@@ -3,6 +3,10 @@
 // Le date sono sempre trattate come "date locali senza orario": la chiave di
 // un giorno e' la stringa 'AAAA-MM-GG' costruita a mano e non con toISOString(),
 // che convertirebbe in UTC e in Italia farebbe scivolare il giorno indietro.
+//
+// I giorni della settimana seguono la numerazione di JavaScript: 0 e' domenica
+// e 6 e' sabato. Le comitive si tengono di sabato salvo diversa scelta, ma
+// l'app funziona con qualsiasi giorno.
 
 (function () {
 
@@ -10,6 +14,17 @@ const MESI = [
   'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno',
   'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre',
 ];
+
+const GIORNI = ['Domenica', 'Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato'];
+const GIORNI_BREVI = ['Dom', 'Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab'];
+
+// "del sabato" ma "della domenica": la preposizione segue il genere.
+const GIORNI_DEL = [
+  'della domenica', 'del lunedì', 'del martedì', 'del mercoledì',
+  'del giovedì', 'del venerdì', 'del sabato',
+];
+
+const SABATO = 6;
 
 function pad(n) {
   return String(n).padStart(2, '0');
@@ -30,12 +45,13 @@ function parseDayKey(key) {
   return new Date(y, m - 1, d);
 }
 
-// Tutti i sabati del mese, in ordine. Sono 4 o 5 a seconda del mese.
-function saturdaysOf(year, month) {
+// Tutti i giorni del mese che cadono nel giorno della settimana scelto, in
+// ordine: sono quattro o cinque a seconda del mese.
+function daysOf(year, month, weekday) {
+  const target = Number.isInteger(weekday) ? weekday : SABATO;
   const out = [];
   const cursor = new Date(year, month, 1);
-  // getDay(): 0 = domenica, 6 = sabato.
-  cursor.setDate(1 + ((6 - cursor.getDay()) + 7) % 7);
+  cursor.setDate(1 + ((target - cursor.getDay()) + 7) % 7);
   while (cursor.getMonth() === month) {
     out.push(new Date(cursor));
     cursor.setDate(cursor.getDate() + 7);
@@ -64,8 +80,9 @@ function longDate(date) {
 }
 
 window.Dates = {
-  MESI, pad, dayKey, monthKey, parseDayKey,
-  saturdaysOf, monthLabel, shiftMonth, today, longDate,
+  MESI, GIORNI, GIORNI_BREVI, GIORNI_DEL, SABATO,
+  pad, dayKey, monthKey, parseDayKey,
+  daysOf, monthLabel, shiftMonth, today, longDate,
 };
 
 })();

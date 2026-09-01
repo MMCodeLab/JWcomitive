@@ -1,7 +1,7 @@
 {
-  "name": "JW comitive — I sabati del mese",
+  "name": "JW comitive — Le comitive del mese",
   "short_name": "JW comitive",
-  "description": "Scegli in quale casa si tiene la comitiva ogni sabato del mese e condividila come immagine.",
+  "description": "Scegli il giorno e in quale casa si tiene la comitiva, e condividi il mese come immagine.",
   "start_url": "./index.html",
   "scope": "./",
   "id": "./",

@@ -142,6 +142,12 @@ function spacedText(ctx, text, x, y, spacing) {
   });
 }
 
+// Il giorno della settimana di una riga, o quello del mese se manca la data.
+function giornoDi(model, row) {
+  if (row && row.date) return row.date.getDay();
+  return Number.isInteger(model.weekday) ? model.weekday : Dates.SABATO;
+}
+
 function measureHeight(model) {
   let h = 88 + LOGO + 50 + 30 + 24 + 76;
   if (model.subtitle) h += 46;
@@ -203,7 +209,8 @@ async function draw(model) {
   // --- Testata -------------------------------------------------------------
   ctx.fillStyle = c.accent;
   ctx.font = '700 30px Inter, sans-serif';
-  spacedText(ctx, 'COMITIVE DEL SABATO', W / 2, y + 15, 6);
+  const occhiello = `COMITIVE ${Dates.GIORNI_DEL[giornoDi(model)].toUpperCase()}`;
+  spacedText(ctx, occhiello, W / 2, y + 15, 6);
   y += 30 + 24;
 
   ctx.fillStyle = c.title;
@@ -269,7 +276,7 @@ async function draw(model) {
 
     ctx.fillStyle = c.accent;
     ctx.font = '700 20px Inter, sans-serif';
-    spacedText(ctx, 'SAB', bx + bs / 2, mid - 26, 3);
+    spacedText(ctx, Dates.GIORNI_BREVI[giornoDi(model, row)].toUpperCase(), bx + bs / 2, mid - 26, 3);
 
     ctx.fillStyle = c.title;
     ctx.font = '600 48px Sora, sans-serif';
@@ -329,11 +336,12 @@ function buildText(model) {
   if (model.subtitle) lines.push(model.subtitle);
   lines.push('');
   model.rows.forEach((row) => {
+    const giorno = Dates.GIORNI[giornoDi(model, row)];
     if (row.skip) {
-      lines.push(`• Sabato ${row.day} — nessuna comitiva`);
+      lines.push(`• ${giorno} ${row.day} — nessuna comitiva`);
       return;
     }
-    let line = `• Sabato ${row.day} — ${row.house || 'da definire'}`;
+    let line = `• ${giorno} ${row.day} — ${row.house || 'da definire'}`;
     if (row.note) line += ` (${row.note})`;
     else if (row.house && model.time) line += ` (ore ${model.time})`;
     lines.push(line);

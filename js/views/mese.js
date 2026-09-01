@@ -1,5 +1,9 @@
-// views/mese.js — la schermata principale: i sabati del mese, uno sotto
-// l'altro, e il pulsante che li manda su WhatsApp come immagine.
+// views/mese.js — la schermata principale: le comitive del mese, una sotto
+// l'altra, e il pulsante che le manda su WhatsApp come immagine.
+//
+// Il giorno della settimana e' una scelta dell'utente (di base il sabato): da
+// qui si cambia con la pillola sotto al nome del mese, e le date si
+// ricalcolano da sole.
 
 (function () {
 
@@ -19,6 +23,7 @@ function render() {
   const rows = State.monthRows(current.year, current.month);
   const done = rows.filter((r) => r.house || r.skip).length;
   const houses = State.houses();
+  const giorno = State.weekday();
 
   root.innerHTML = `
     <div class="month-bar">
@@ -30,8 +35,15 @@ function render() {
       <button class="month-arrow" data-move="1" aria-label="Mese successivo">›</button>
     </div>
 
+    <div class="day-row">
+      <button class="day-pill" data-weekday>
+        Comitive ${Dates.GIORNI_DEL[giorno]}
+        <span class="day-caret" aria-hidden="true"></span>
+      </button>
+    </div>
+
     <div class="month-meta">
-      <span>${done} di ${rows.length} sabati compilati</span>
+      <span>${done} di ${rows.length} compilate</span>
       ${isThisMonth() ? '' : '<span class="dot"></span><button class="link-btn" data-today>Torna a oggi</button>'}
     </div>
 
@@ -42,7 +54,7 @@ function render() {
     ${houses.length ? '' : `
       <div class="empty" style="margin-top:18px">
         <h3>Aggiungi le case</h3>
-        <p>Salva una volta per tutte le case che ospitano: poi ogni sabato si compila con un tocco.</p>
+        <p>Salva una volta per tutte le case che ospitano: poi ogni data si compila con un tocco.</p>
         <a class="btn btn-primary" href="#/case">Vai alle case</a>
       </div>`}
 
@@ -70,6 +82,14 @@ function render() {
     });
   }
 
+  root.querySelector('[data-weekday]').addEventListener('click', () => {
+    Components.pickWeekday(giorno, (scelto) => {
+      State.updateSettings({ weekday: scelto });
+      Router.render();
+      Components.toast(`Comitive ${Dates.GIORNI_DEL[scelto]}`);
+    });
+  });
+
   root.querySelectorAll('.sat-card').forEach((btn) => {
     btn.addEventListener('click', () => openEditor(btn.dataset.key));
   });
@@ -85,11 +105,12 @@ function render() {
 function card(row) {
   const cls = row.skip ? 'is-skip' : (row.house ? '' : 'is-empty');
   const time = State.settings().time;
+  const breve = Dates.GIORNI_BREVI[row.date.getDay()];
   const house = row.skip ? 'Nessuna comitiva' : (row.house || 'Scegli la casa');
   const note = row.note || (!row.skip && row.house && time ? `ore ${time}` : '');
   return `
     <button class="sat-card ${cls}" data-key="${row.key}">
-      <span class="sat-badge"><em>Sab</em><b>${row.day}</b></span>
+      <span class="sat-badge"><em>${breve}</em><b>${row.day}</b></span>
       <span class="sat-main">
         <span class="sat-house">${esc(house)}</span>
         ${note ? `<span class="sat-note">${esc(note)}</span>` : ''}
@@ -115,7 +136,7 @@ function openEditor(key) {
   };
 
   Components.openSheet({
-    title: `Sabato ${date.getDate()} ${Dates.MESI[date.getMonth()].toLowerCase()}`,
+    title: `${Dates.GIORNI[date.getDay()]} ${date.getDate()} ${Dates.MESI[date.getMonth()].toLowerCase()}`,
     subtitle: 'In quale casa si tiene la comitiva?',
     html: `
       <div class="chips" data-chips>
@@ -136,14 +157,14 @@ function openEditor(key) {
       <div class="switch-row">
         <div>
           <div class="switch-label">Nessuna comitiva</div>
-          <div class="switch-sub">Il sabato resta in elenco, segnato come libero</div>
+          <div class="switch-sub">La data resta in elenco, segnata come libera</div>
         </div>
         <button class="switch" data-skip aria-label="Nessuna comitiva"></button>
       </div>
 
       <div class="actions">
         <button class="btn btn-primary btn-block" data-save>Salva</button>
-        ${saved.house || saved.skip || saved.note ? '<button class="btn btn-danger btn-block" data-clear>Svuota questo sabato</button>' : ''}
+        ${saved.house || saved.skip || saved.note ? '<button class="btn btn-danger btn-block" data-clear>Svuota questa data</button>' : ''}
       </div>`,
 
     onMount: (sheet, close) => {
@@ -202,8 +223,8 @@ function openEditor(key) {
       if (clearBtn) {
         clearBtn.addEventListener('click', async () => {
           const ok = await Components.confirm({
-            title: 'Svuotare questo sabato?',
-            message: `Sabato ${date.getDate()} tornerà senza casa assegnata.`,
+            title: 'Svuotare questa data?',
+            message: `${Dates.GIORNI[date.getDay()]} ${date.getDate()} tornerà senza casa assegnata.`,
             confirmLabel: 'Svuota',
           });
           if (!ok) return;
@@ -223,15 +244,15 @@ async function doRotation() {
   const rows = State.monthRows(current.year, current.month);
   const free = rows.filter((r) => !r.house && !r.skip).length;
   if (!free) {
-    Components.toast('Tutti i sabati sono già compilati');
+    Components.toast('Tutte le date sono già compilate');
     return;
   }
 
   const ok = await Components.confirm({
     title: 'Riempire a rotazione?',
     message: free === 1
-      ? 'Un sabato verrà assegnato facendo girare le case in ordine. Quelli già compilati non si toccano.'
-      : `${free} sabati verranno assegnati facendo girare le case in ordine. Quelli già compilati non si toccano.`,
+      ? 'Una data verrà assegnata facendo girare le case in ordine. Quelle già compilate non si toccano.'
+      : `${free} date verranno assegnate facendo girare le case in ordine. Quelle già compilate non si toccano.`,
     confirmLabel: 'Riempi',
     danger: false,
   });
@@ -239,7 +260,7 @@ async function doRotation() {
 
   const filled = State.fillRotation(current.year, current.month);
   Router.render();
-  Components.toast(filled === 1 ? 'Compilato 1 sabato' : `Compilati ${filled} sabati`);
+  Components.toast(filled === 1 ? 'Compilata 1 data' : `Compilate ${filled} date`);
 }
 
 // --- Condivisione ----------------------------------------------------------
@@ -251,6 +272,7 @@ function buildModel(theme) {
     subtitle: settings.subtitle || '',
     time: settings.time || '',
     footer: '',
+    weekday: State.weekday(),
     theme,
     rows: State.monthRows(current.year, current.month),
   };

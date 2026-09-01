@@ -104,7 +104,7 @@ function openEditor(id) {
           const ok = await Components.confirm({
             title: `Eliminare ${house.name}?`,
             message: stats.total
-              ? `Sparisce dall’elenco, ma i ${stats.total} sabati già assegnati restano com’erano.`
+              ? `Sparisce dall’elenco, ma le ${stats.total} date già assegnate restano com’erano.`
               : 'Sparisce dall’elenco delle case.',
             confirmLabel: 'Elimina',
           });

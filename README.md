@@ -1,7 +1,7 @@
 # JW comitive
 
-App per preparare, ogni mese, l'elenco dei sabati con la casa che ospita la
-comitiva, e mandarlo al gruppo WhatsApp come **immagine** — non come link.
+App per preparare, ogni mese, l'elenco delle comitive con la casa che ospita
+ciascuna, e mandarlo al gruppo WhatsApp come **immagine** — non come link.
 
 ## Cos'è
 
@@ -12,24 +12,30 @@ telefono.
 
 Il giro di ogni mese è questo:
 
-1. l'app calcola da sola tutti i sabati del mese (sono quattro o cinque);
-2. per ognuno si sceglie la casa con un tocco, dall'elenco di quelle salvate;
+1. si sceglie una volta sola il giorno della settimana delle comitive (di base
+   il sabato) e l'app calcola da sola tutte le date del mese che ci cadono,
+   quattro o cinque;
+2. per ognuna si sceglie la casa con un tocco, dall'elenco di quelle salvate;
 3. **Condividi il mese** disegna l'immagine e apre la condivisione del telefono:
    scegliendo WhatsApp arriva la tabella già impaginata, che si vede subito
    nella chat, con l'elenco scritto come didascalia.
 
 ## Funzionalità principali
 
-- **Sabati** — un mese alla volta, con le frecce per spostarsi avanti e
-  indietro. Ogni sabato può avere una casa, una nota libera (per esempio
+- **Comitive** — un mese alla volta, con le frecce per spostarsi avanti e
+  indietro. Ogni data può avere una casa, una nota libera (per esempio
   «ore 20:00, portare le sedie») oppure l'indicazione «Nessuna comitiva».
-- **Riempi a rotazione** — assegna in un colpo solo i sabati ancora vuoti,
+- **Giorno della settimana** — si cambia dalla pillola sotto al nome del mese o
+  dalle Impostazioni, e le date si ricalcolano da sole. Cambiarlo non cancella
+  niente: le assegnazioni sono legate alla data esatta, quindi tornando al
+  giorno di prima si ritrova tutto com'era.
+- **Riempi a rotazione** — assegna in un colpo solo le date ancora vuote,
   facendo girare le case nell'ordine dell'elenco e riprendendo da quella che ha
-  ospitato per ultima il mese prima. I sabati già compilati non si toccano.
+  ospitato per ultima il mese prima. Le date già compilate non si toccano.
 - **Case** — l'elenco delle famiglie che ospitano, con quante volte hanno già
   ospitato e la data dell'ultima volta, per capire a chi tocca.
 - **Immagine da condividere** — versione scura o chiara, con il logo, il mese,
-  la riga del gruppo e una riga per ogni sabato. In alternativa si può salvare
+  la riga del gruppo e una riga per ogni data. In alternativa si può salvare
   l'immagine o copiare solo il testo.
 - **Copia di sicurezza** — esportazione e importazione di un file con tutti i
   dati, dalle Impostazioni.
@@ -69,12 +75,12 @@ index.html               la pagina unica, con la barra in alto e quella in basso
 manifest.webmanifest     nome, icone e colori per l'installazione sul telefono
 sw.js                    service worker: fa funzionare l'app anche offline
 css/styles.css           tutto lo stile
-js/dates.js              calcolo dei sabati e nomi dei mesi
-js/state.js              dati, salvataggio, rotazione delle case, backup
+js/dates.js              calcolo delle date, nomi dei mesi e dei giorni
+js/state.js              dati, giorno scelto, rotazione delle case, backup
 js/components.js         avvisi, pannelli dal basso, richieste di conferma
 js/share-card.js         disegno della locandina e consegna a WhatsApp
 js/router.js             le tre schermate
-js/views/mese.js         schermata dei sabati e condivisione
+js/views/mese.js         schermata delle comitive e condivisione
 js/views/case.js         elenco delle case
 js/views/impostazioni.js impostazioni e copia di sicurezza
 js/pwa-shell.js          guscio comune alle app "My" (aggiornamenti, offline)

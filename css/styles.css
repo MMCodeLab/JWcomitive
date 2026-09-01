@@ -134,7 +134,23 @@ body {
 .month-meta .dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: .5; }
 .link-btn { background: none; border: none; padding: 0; font: inherit; color: var(--blue); cursor: pointer; }
 
-/* Le schede dei sabati ---------------------------------------------------- */
+/* Il giorno della settimana scelto: si tocca per cambiarlo ---------------- */
+.day-row { display: flex; justify-content: center; margin: 12px 0 2px; }
+.day-pill {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 8px 16px; border-radius: 999px;
+  border: 1px solid var(--line-strong); background: var(--surface);
+  color: var(--text-soft);
+  font-family: var(--font-body); font-size: 13.5px; font-weight: 600;
+  cursor: pointer; transition: background .18s, color .18s;
+}
+.day-pill:active { background: var(--surface-strong); color: #fff; }
+.day-caret {
+  width: 6px; height: 6px; transform: translateY(-2px) rotate(45deg);
+  border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor;
+}
+
+/* Le schede delle comitive ------------------------------------------------ */
 .sat-list { display: flex; flex-direction: column; gap: 10px; }
 .sat-card {
   display: grid; grid-template-columns: 58px 1fr 16px; align-items: center; gap: 14px;
@@ -251,6 +267,14 @@ body {
   transition: border-color .18s, background .18s;
 }
 .input:focus { border-color: rgba(107, 167, 224, .55); background: rgba(255, 255, 255, .08); }
+.picker {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 13px 14px; border-radius: 13px;
+  background: rgba(255, 255, 255, .05); border: 1px solid var(--line); color: var(--text);
+  font-family: var(--font-body); font-size: 16px; text-align: left; cursor: pointer;
+  transition: background .18s;
+}
+.picker:active { background: rgba(255, 255, 255, .08); }
 .input::placeholder { color: var(--text-faint); }
 .hint { font-size: 12.5px; color: var(--text-faint); margin: -6px 0 14px; line-height: 1.5; }
 

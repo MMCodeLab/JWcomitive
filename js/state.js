@@ -17,6 +17,7 @@ const EMPTY = {
   houses: [],                 // { id, name, note }
   assignments: {},            // 'AAAA-MM-GG' -> { house, note, skip }
   settings: {
+    weekday: 6,               // giorno delle comitive: 0 domenica ... 6 sabato
     subtitle: '',             // riga sotto al titolo della locandina
     time: '',                 // orario predefinito, es. '19:30'
     cardTheme: 'scuro',       // 'scuro' | 'chiaro'
@@ -86,7 +87,7 @@ function updateHouse(id, patch) {
   Object.assign(house, patch);
   house.name = String(house.name).trim();
 
-  // Rinominare una casa aggiorna anche i sabati gia' assegnati: e' quasi
+  // Rinominare una casa aggiorna anche le date gia' assegnate: e' quasi
   // sempre una correzione di battitura, non una casa diversa.
   if (patch.name && house.name && house.name !== oldName) {
     Object.values(data.assignments).forEach((a) => {
@@ -101,7 +102,7 @@ function removeHouse(id) {
   save();
 }
 
-// --- Sabati ----------------------------------------------------------------
+// --- Date delle comitive ---------------------------------------------------
 
 function assignmentFor(key) {
   return data.assignments[key] || null;
@@ -121,10 +122,18 @@ function clearAssignment(key) {
   save();
 }
 
-// Le righe di un mese: un oggetto per ogni sabato, gia' pronto da disegnare
+// Il giorno della settimana in cui si tengono le comitive. Cambiarlo non
+// cancella niente: le assegnazioni sono legate alla data esatta, quindi
+// tornando al giorno di prima si ritrova tutto com'era.
+function weekday() {
+  const value = data.settings.weekday;
+  return Number.isInteger(value) ? value : Dates.SABATO;
+}
+
+// Le righe di un mese: un oggetto per ogni data utile, gia' pronto da disegnare
 // sia nell'elenco sia sulla locandina.
 function monthRows(year, month) {
-  return Dates.saturdaysOf(year, month).map((date) => {
+  return Dates.daysOf(year, month, weekday()).map((date) => {
     const key = Dates.dayKey(date);
     const a = data.assignments[key] || {};
     return {
@@ -150,13 +159,13 @@ function houseStats(name) {
   };
 }
 
-// Riempie i sabati ancora vuoti facendo girare le case in ordine, ripartendo
+// Riempie le date ancora vuote facendo girare le case in ordine, ripartendo
 // da quella che ha ospitato per ultima prima di questo mese.
 function fillRotation(year, month) {
   const list = data.houses.map((h) => h.name).filter(Boolean);
   if (!list.length) return 0;
 
-  const firstKey = Dates.dayKey(Dates.saturdaysOf(year, month)[0]);
+  const firstKey = Dates.dayKey(Dates.daysOf(year, month, weekday())[0]);
   const before = Object.keys(data.assignments)
     .filter((k) => k < firstKey && data.assignments[k].house)
     .sort();
@@ -166,7 +175,7 @@ function fillRotation(year, month) {
   let filled = 0;
   monthRows(year, month).forEach((row) => {
     if (row.house || row.skip) {
-      // Un sabato gia' compilato a mano non si tocca, ma fa avanzare il giro
+      // Una data gia' compilata a mano non si tocca, ma fa avanzare il giro
       // se la casa e' in elenco, cosi' il turno successivo e' quello giusto.
       const known = list.indexOf(row.house);
       if (known >= 0) index = known;
@@ -226,7 +235,7 @@ window.State = {
   load, save, subscribe,
   houses, addHouse, updateHouse, removeHouse,
   assignmentFor, setAssignment, clearAssignment,
-  monthRows, houseStats, fillRotation,
+  monthRows, houseStats, fillRotation, weekday,
   settings, updateSettings,
   hasData, exportData, importData,
 };

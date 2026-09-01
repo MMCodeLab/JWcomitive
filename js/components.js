@@ -104,6 +104,32 @@ function confirmAction(options) {
   });
 }
 
-window.Components = { escape, toast, openSheet, closeSheet, confirm: confirmAction };
+// --- Scelta del giorno della settimana -------------------------------------
+
+// Serve in due posti: sulla schermata delle comitive e nelle Impostazioni.
+// I giorni sono elencati da lunedi' a domenica come su un calendario italiano,
+// anche se dentro l'app restano numerati alla maniera di JavaScript.
+const ORDINE_GIORNI = [1, 2, 3, 4, 5, 6, 0];
+
+function pickWeekday(current, onPick) {
+  openSheet({
+    title: 'Giorno delle comitive',
+    subtitle: 'L’app prende da sola tutte le date del mese che cadono in questo giorno.',
+    html: `<div class="chips">${ORDINE_GIORNI.map((i) => `
+      <button class="chip ${i === current ? 'is-on' : ''}" data-day="${i}">${Dates.GIORNI[i]}</button>
+    `).join('')}</div>`,
+    onMount: (sheet, close) => {
+      sheet.querySelectorAll('[data-day]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const chosen = Number(btn.dataset.day);
+          close();
+          if (chosen !== current) onPick(chosen);
+        });
+      });
+    },
+  });
+}
+
+window.Components = { escape, toast, openSheet, closeSheet, confirm: confirmAction, pickWeekday };
 
 })();

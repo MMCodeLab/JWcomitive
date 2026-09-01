@@ -14,6 +14,15 @@ function render() {
 
     <div class="card">
       <div class="field">
+        <label>Giorno delle comitive</label>
+        <button class="picker" data-weekday>
+          <span>${esc(Dates.GIORNI[State.weekday()])}</span>
+          <span class="day-caret" aria-hidden="true"></span>
+        </button>
+      </div>
+      <p class="hint">Le date del mese si ricalcolano da sole. Cambiarlo non cancella niente:
+      quello che hai già compilato resta legato alla sua data.</p>
+      <div class="field">
         <label for="jw-sub">Riga sotto al titolo</label>
         <input class="input" id="jw-sub" type="text" placeholder="es. Gruppo 2 — Congregazione Sud"
                value="${esc(s.subtitle)}" autocomplete="off" />
@@ -54,10 +63,18 @@ function render() {
         <span class="info-value">versione ${esc(window.APP_VERSION || '1.0')}</span>
       </div>
       <div class="info-row">
-        <span class="info-label">Sabati calcolati</span>
-        <span class="info-value">in automatico, mese per mese</span>
+        <span class="info-label">Date</span>
+        <span class="info-value">calcolate in automatico, mese per mese</span>
       </div>
     </div>`;
+
+  root.querySelector('[data-weekday]').addEventListener('click', () => {
+    Components.pickWeekday(State.weekday(), (scelto) => {
+      State.updateSettings({ weekday: scelto });
+      Router.render();
+      Components.toast(`Comitive ${Dates.GIORNI_DEL[scelto]}`);
+    });
+  });
 
   const sub = root.querySelector('#jw-sub');
   const time = root.querySelector('#jw-time');
@@ -110,7 +127,7 @@ async function importFile(chosen) {
   // Sostituire i dati e' irreversibile: si chiede prima, sempre.
   const ok = await Components.confirm({
     title: 'Sostituire i dati?',
-    message: 'Case e sabati di questo telefono verranno sostituiti con quelli del file.',
+    message: 'Case e date di questo telefono verranno sostituite con quelle del file.',
     confirmLabel: 'Sostituisci',
   });
   if (!ok) return;
