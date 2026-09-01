@@ -1,0 +1,4 @@
+# Configurazione locale degli strumenti: contiene percorsi di questa macchina
+.claude/
+# Il logo originale da cui si rigenerano le icone: pesante e personale
+tools/logo-source.png

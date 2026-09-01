@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+  <title>JW comitive — I sabati del mese</title>
+  <meta name="description" content="Scegli in quale casa si tiene la comitiva ogni sabato del mese e condividila su WhatsApp come immagine." />
+
+  <link rel="manifest" href="manifest.webmanifest" />
+  <meta name="theme-color" content="#0d1a27" />
+
+  <link rel="icon" type="image/png" sizes="64x64" href="icons/favicon.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="JW comitive" />
+  <meta name="mobile-web-app-capable" content="yes" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="bg-glow" aria-hidden="true"><span class="glow glow-a"></span><span class="glow glow-b"></span></div>
+
+  <div id="app-shell">
+    <header class="topbar">
+      <div class="topbar-inner">
+        <img src="icons/icon-192.png" alt="" class="brand-mark" width="34" height="34" />
+        <span class="brand-text"><strong>JW</strong> comitive</span>
+      </div>
+    </header>
+
+    <main id="view" class="view" role="main"></main>
+
+    <nav class="bottom-nav" id="bottom-nav" aria-label="Navigazione principale">
+      <a href="#/" class="nav-item" data-route="mese">
+        <span class="nav-icon" data-icon="calendario" aria-hidden="true"></span>
+        <span class="nav-label">Sabati</span>
+      </a>
+      <a href="#/case" class="nav-item" data-route="case">
+        <span class="nav-icon" data-icon="casa" aria-hidden="true"></span>
+        <span class="nav-label">Case</span>
+      </a>
+      <a href="#/impostazioni" class="nav-item" data-route="impostazioni">
+        <span class="nav-icon" data-icon="opzioni" aria-hidden="true"></span>
+        <span class="nav-label">Impostazioni</span>
+      </a>
+    </nav>
+  </div>
+
+  <div id="modal-root"></div>
+  <div id="toast-root" aria-live="polite"></div>
+
+  <!--
+    Script classici (non moduli ES) caricati in ordine di dipendenza: cosi'
+    l'app funziona anche aperta con un doppio click su index.html (file://),
+    dove Chrome blocca i moduli ES per policy CORS.
+  -->
+  <script src="js/dates.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/share-card.js"></script>
+  <script src="js/router.js"></script>
+  <script src="js/views/mese.js"></script>
+  <script src="js/views/case.js"></script>
+  <script src="js/views/impostazioni.js"></script>
+  <script src="js/pwa-shell.js" data-app="jwcomitive" data-sw="sw.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
