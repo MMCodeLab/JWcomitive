@@ -24,7 +24,9 @@
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --topbar-h: 58px;
-  --nav-h: 62px;
+  --nav-h: 70px;
+  --radius-pill: 999px;
+  --ease-spring: cubic-bezier(.22, 1, .36, 1);
 
   --font-head: 'Sora', 'Segoe UI', system-ui, sans-serif;
   --font-body: 'Inter', 'Segoe UI', system-ui, sans-serif;
@@ -81,7 +83,7 @@ body {
 /* Corpo ------------------------------------------------------------------- */
 .view {
   max-width: 640px; margin: 0 auto;
-  padding: calc(var(--topbar-h) + var(--safe-top) + 18px) 16px calc(var(--nav-h) + var(--safe-bottom) + 28px);
+  padding: calc(var(--topbar-h) + var(--safe-top) + 18px) 16px calc(var(--nav-h) + max(16px, var(--safe-bottom)) + 28px);
   animation: view-in .28s ease both;
 }
 @keyframes view-in { from { opacity: 0; transform: translateY(8px); } }
@@ -92,25 +94,50 @@ body {
   margin: 0 0 14px;
 }
 
-/* Barra di navigazione in basso ------------------------------------------- */
+/* Barra di navigazione in basso -------------------------------------------
+   La stessa delle altre app della famiglia: una barra staccata dal bordo, di
+   vetro, con una pillola colorata che scivola sotto la voce attiva. La pillola
+   viene misurata in pixel da js/router.js, non in percentuale, cosi' resta
+   giusta con qualsiasi larghezza e qualsiasi numero di voci. */
 .bottom-nav {
-  position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-  display: flex; justify-content: center; gap: 6px;
-  padding: 6px 10px calc(6px + var(--safe-bottom));
-  background: rgba(10, 21, 33, 0.86);
-  backdrop-filter: saturate(150%) blur(18px);
-  -webkit-backdrop-filter: saturate(150%) blur(18px);
-  border-top: 1px solid var(--line);
+  position: fixed; z-index: 40;
+  left: 50%; bottom: max(16px, var(--safe-bottom));
+  transform: translateX(-50%);
+  width: calc(100% - 32px); max-width: 528px;
+  display: flex;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+  touch-action: pan-x; overscroll-behavior-x: contain; scrollbar-width: none;
+  padding: 6px; border-radius: var(--radius-pill);
+  background: rgba(10, 21, 33, 0.72);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 34px rgba(3, 10, 18, .5);
+  backdrop-filter: blur(20px) saturate(160%);
+  -webkit-backdrop-filter: blur(20px) saturate(160%);
 }
+.bottom-nav::-webkit-scrollbar { display: none; }
+
+.nav-pill {
+  position: absolute; top: 6px; left: 0; z-index: 0;
+  width: 33.333%; height: calc(100% - 12px);
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #4f92d4, #2c6ba6);
+  box-shadow: 0 4px 18px rgba(47, 110, 168, .45);
+  transition: transform .45s var(--ease-spring), width .45s var(--ease-spring);
+  will-change: transform;
+}
+
 .nav-item {
-  flex: 1 1 0; max-width: 140px;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-  height: 50px; border-radius: 14px; text-decoration: none;
-  color: var(--text-faint); transition: color .18s, background .18s;
+  position: relative; z-index: 1;
+  flex: 1 1 0; min-width: 66px;
+  display: flex; flex-direction: column; align-items: center; gap: 3px;
+  padding: 10px 2px; border-radius: var(--radius-pill); text-decoration: none;
+  color: var(--text-faint);
+  transition: color .3s ease, transform .2s var(--ease-spring);
 }
-.nav-item.is-active { color: #fff; background: rgba(107, 167, 224, 0.14); }
+.nav-item:active { transform: scale(.92); }
+.nav-item.is-active { color: #fff; }
 .nav-icon { width: 22px; height: 22px; background: currentColor; }
-.nav-label { font-size: 11px; font-weight: 500; letter-spacing: .02em; }
+.nav-label { font-size: 10.5px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
 [data-icon="calendario"] { -webkit-mask: var(--i-cal) center/contain no-repeat; mask: var(--i-cal) center/contain no-repeat; }
 [data-icon="casa"] { -webkit-mask: var(--i-home) center/contain no-repeat; mask: var(--i-home) center/contain no-repeat; }
 [data-icon="opzioni"] { -webkit-mask: var(--i-opt) center/contain no-repeat; mask: var(--i-opt) center/contain no-repeat; }
@@ -329,7 +356,7 @@ body {
 
 /* Avvisi ------------------------------------------------------------------ */
 #toast-root {
-  position: fixed; left: 0; right: 0; bottom: calc(var(--nav-h) + var(--safe-bottom) + 14px);
+  position: fixed; left: 0; right: 0; bottom: calc(var(--nav-h) + max(16px, var(--safe-bottom)) + 22px);
   z-index: 80; display: flex; flex-direction: column; align-items: center; gap: 8px; pointer-events: none;
 }
 .toast {

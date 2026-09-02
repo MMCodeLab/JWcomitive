@@ -62,11 +62,12 @@ foto e non un collegamento.
 ## Come avviarla in locale
 
 ```bash
-python -m http.server 5530
+python serve.py
 ```
 
-Poi apri `http://localhost:5530/`. In locale il service worker viene disattivato
-apposta, così le modifiche si vedono subito senza svuotare le cache.
+Poi apri `http://localhost:5530/`. Il server di sviluppo manda
+`Cache-Control: no-store` e in locale il service worker viene disattivato
+apposta: così le modifiche si vedono subito, senza svuotare nessuna cache.
 
 ## Struttura del progetto
 
@@ -85,6 +86,7 @@ js/views/case.js         elenco delle case
 js/views/impostazioni.js impostazioni e copia di sicurezza
 js/pwa-shell.js          guscio comune alle app "My" (aggiornamenti, offline)
 icons/                   icone dell'app e logo grande usato sulla locandina
+serve.py                 server di sviluppo locale, senza cache
 tools/make_icons.py      rigenera tutte le icone
 ```
 
