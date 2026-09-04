@@ -3,7 +3,8 @@
 // L'immagine viene disegnata su un canvas e trasformata in un file vero:
 // e' questo che permette di condividerla come foto, e non come link. Su
 // WhatsApp arriva quindi la tabella gia' impaginata, che si vede subito nella
-// chat senza che nessuno debba aprire niente.
+// chat senza che nessuno debba aprire niente. Sulla locandina ci sono solo il
+// mese, le date e le case: nessun marchio dell'app.
 //
 // Nota su iOS: navigator.share() deve partire dentro il tocco dell'utente. Per
 // questo il file viene preparato prima, quando si apre l'anteprima, e il
@@ -13,7 +14,6 @@
 
 const W = 1080;          // larghezza in pixel della locandina
 const PAD = 64;          // margine laterale
-const LOGO = 172;
 const ROW_H = 148;
 const ROW_GAP = 16;
 
@@ -50,25 +50,10 @@ const CHIARO = {
   rule: 'rgba(18, 41, 62, 0.20)',
 };
 
-let logoPromise = null;
 let noisePattern = null;
 
 function palette(theme) {
   return theme === 'chiaro' ? CHIARO : SCURO;
-}
-
-// Il logo dell'app: e' nella stessa cartella del sito, quindi il canvas non
-// viene "sporcato" e toBlob() continua a funzionare.
-function loadLogo() {
-  if (!logoPromise) {
-    logoPromise = new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => resolve(img);
-      img.onerror = () => resolve(null);
-      img.src = 'icons/logo-1024.png';
-    });
-  }
-  return logoPromise;
 }
 
 // I caratteri vanno chiesti prima di disegnare: il canvas non aspetta il
@@ -149,7 +134,7 @@ function giornoDi(model, row) {
 }
 
 function measureHeight(model) {
-  let h = 88 + LOGO + 50 + 30 + 24 + 76;
+  let h = 96 + 30 + 24 + 76;
   if (model.subtitle) h += 46;
   h += 44 + 44;
   h += model.rows.length * ROW_H + Math.max(0, model.rows.length - 1) * ROW_GAP;
@@ -160,7 +145,6 @@ function measureHeight(model) {
 
 async function draw(model) {
   await ensureFonts();
-  const logo = await loadLogo();
   const c = palette(model.theme);
 
   const H = measureHeight(model);
@@ -185,28 +169,11 @@ async function draw(model) {
 
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  let y = 88;
-
-  // --- Logo ----------------------------------------------------------------
-  if (logo) {
-    ctx.save();
-    ctx.shadowColor = 'rgba(0, 0, 0, 0.35)';
-    ctx.shadowBlur = 34;
-    ctx.shadowOffsetY = 12;
-    roundRect(ctx, (W - LOGO) / 2, y, LOGO, LOGO, 42);
-    ctx.fillStyle = '#12253a';
-    ctx.fill();
-    ctx.restore();
-
-    ctx.save();
-    roundRect(ctx, (W - LOGO) / 2, y, LOGO, LOGO, 42);
-    ctx.clip();
-    ctx.drawImage(logo, (W - LOGO) / 2, y, LOGO, LOGO);
-    ctx.restore();
-  }
-  y += LOGO + 50;
 
   // --- Testata -------------------------------------------------------------
+  // Nessun logo: la locandina finisce in una chat di gruppo, e chi la legge
+  // deve trovarci le date e le case, non il marchio dell'app.
+  let y = 96;
   ctx.fillStyle = c.accent;
   ctx.font = '700 30px Inter, sans-serif';
   const occhiello = `COMITIVE ${Dates.GIORNI_DEL[giornoDi(model)].toUpperCase()}`;
@@ -243,7 +210,7 @@ async function draw(model) {
   ctx.restore();
   y += 44;
 
-  // --- Una riga per sabato -------------------------------------------------
+  // --- Una riga per data ---------------------------------------------------
   const x0 = PAD;
   const cardW = W - PAD * 2;
 
@@ -261,7 +228,7 @@ async function draw(model) {
     ctx.lineWidth = 2;
     ctx.stroke();
 
-    // Riquadro con il numero del sabato.
+    // Riquadro con il numero del giorno.
     const bx = x0 + 26;
     const bs = 108;
     roundRect(ctx, bx, mid - bs / 2, bs, bs, 26);

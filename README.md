@@ -34,9 +34,10 @@ Il giro di ogni mese è questo:
   ospitato per ultima il mese prima. Le date già compilate non si toccano.
 - **Case** — l'elenco delle famiglie che ospitano, con quante volte hanno già
   ospitato e la data dell'ultima volta, per capire a chi tocca.
-- **Immagine da condividere** — versione scura o chiara, con il logo, il mese,
-  la riga del gruppo e una riga per ogni data. In alternativa si può salvare
-  l'immagine o copiare solo il testo.
+- **Immagine da condividere** — versione scura o chiara, con il mese, la riga
+  del gruppo e una riga per ogni data. Niente logo dell'app: finisce in una chat
+  di gruppo, e chi la legge deve trovarci le date e le case. In alternativa si
+  può salvare l'immagine o copiare solo il testo.
 - **Copia di sicurezza** — esportazione e importazione di un file con tutti i
   dati, dalle Impostazioni.
 
@@ -85,7 +86,7 @@ js/views/mese.js         schermata delle comitive e condivisione
 js/views/case.js         elenco delle case
 js/views/impostazioni.js impostazioni e copia di sicurezza
 js/pwa-shell.js          guscio comune alle app "My" (aggiornamenti, offline)
-icons/                   icone dell'app e logo grande usato sulla locandina
+icons/                   icone dell'app
 serve.py                 server di sviluppo locale, senza cache
 tools/make_icons.py      rigenera tutte le icone
 ```
@@ -101,8 +102,9 @@ Le icone attuali sono disegnate dallo script. Per usare il file originale:
 python tools/make_icons.py
 ```
 
-Lo script ritaglia l'immagine in quadrato e rigenera tutte le misure, compreso
-`icons/logo-1024.png`, che è quello che compare in cima all'immagine condivisa.
+Lo script ritaglia l'immagine in quadrato e rigenera tutte le misure, più
+`icons/logo-1024.png`, che è solo una copia grande del logo tenuta da parte:
+sull'immagine da condividere il logo non compare.
 
 ## Pubblicare gli aggiornamenti
 
